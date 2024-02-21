@@ -1,0 +1,13 @@
+version: '3.3'
+services:
+  service_provider:
+    image: postgres:14.5
+    restart: always
+    environment:
+      - DATABASE_HOST=127.0.0.1
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_DB=serviceProvider
+
+    ports:
+      - "54321:5432"
