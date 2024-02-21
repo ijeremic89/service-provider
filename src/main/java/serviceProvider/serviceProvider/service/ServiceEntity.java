@@ -1,4 +1,4 @@
-package serviceProvider.serviceProvider.features.service;
+package serviceProvider.serviceProvider.service;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -9,9 +9,11 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
-import serviceProvider.serviceProvider.features.Provider.ProviderEntity;
+import jakarta.persistence.Table;
+import serviceProvider.serviceProvider.provider.ProviderEntity;
 
 @Entity
+@Table(name = "service")
 public class ServiceEntity {
 
     @Id
