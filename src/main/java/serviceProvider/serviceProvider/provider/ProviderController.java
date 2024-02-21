@@ -1,6 +1,7 @@
 package serviceProvider.serviceProvider.provider;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,8 +14,8 @@ public class ProviderController {
     @Autowired
     private FindProvider findProvider;
 
-    @GetMapping("/{providerId}")
-    public ProviderDto getProvider(@PathVariable Long providerId)  {
-        return findProvider.findProviderById(providerId);
+    @GetMapping("/{id}")
+    public ResponseEntity<ProviderDto> getProvider(@PathVariable Long id)  {
+        return ResponseEntity.ok(findProvider.findProviderById(id));
     }
 }
