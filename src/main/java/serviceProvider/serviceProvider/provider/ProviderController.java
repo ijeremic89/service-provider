@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,16 +23,21 @@ public class ProviderController {
 
     @GetMapping("/{id}")
     public ResponseEntity<ProviderDto> getProvider(@PathVariable Long id) {
-        return ResponseEntity.ok(providerService.findProviderById(id));
+        return new ResponseEntity<>(providerService.findProviderById(id), HttpStatus.OK);
     }
 
     @GetMapping("/getAll")
     public ResponseEntity<List<ProviderDto>> getAllProviders() {
-        return ResponseEntity.ok(providerService.findAllProviders());
+        return new ResponseEntity<>(providerService.findAllProviders(), HttpStatus.OK);
     }
 
     @PostMapping("/create")
     public ResponseEntity<ProviderDto> createProvider(@RequestBody ProviderDto providerDto) {
         return new ResponseEntity<>(providerService.createProvider(providerDto), HttpStatus.CREATED);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteProvider(@PathVariable Long id) {
+        return new ResponseEntity<>(providerService.deleteProvider(id), HttpStatus.OK);
     }
 }

@@ -59,4 +59,13 @@ public class ProviderEntity {
         this.services.add(service);
         service.getProviders().add(this);
     }
+    public void removeService(ServiceEntity service) {
+        this.getServices().remove(service);
+        service.getProviders().remove(this);
+    }
+    public void removeServices() {
+        for (ServiceEntity service : new HashSet<>(services)) {
+            removeService(service);
+        }
+    }
 }

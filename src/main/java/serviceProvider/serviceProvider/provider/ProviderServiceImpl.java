@@ -54,7 +54,12 @@ public class ProviderServiceImpl implements ProviderService {
 
     @Override
     public String deleteProvider(Long id) {
-        return null;
+        ProviderEntity provider = providerRepository.findById(id)
+                                                    .orElseThrow(() -> new ProviderNotFoundException(id));
+
+        provider.removeServices();
+        providerRepository.deleteById(provider.getId());
+        return "Provider with id: " + id + " deleted successfully!";
     }
 
     private void mapDtoToEntity(ProviderDto providerDto, ProviderEntity provider) {
