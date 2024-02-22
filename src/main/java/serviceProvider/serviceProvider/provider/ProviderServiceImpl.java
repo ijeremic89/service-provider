@@ -48,8 +48,15 @@ public class ProviderServiceImpl implements ProviderService {
     }
 
     @Override
-    public ProviderDto updateProvider(Long id, ProviderDto provider) {
-        return null;
+    public ProviderDto updateProvider(Long id, ProviderDto providerDto) {
+        ProviderEntity provider = providerRepository.findById(id)
+                                                    .orElseThrow(() -> new ProviderNotFoundException(id));
+
+        providerDto.setId(provider.getId());
+        provider.getServices().clear();
+        mapDtoToEntity(providerDto, provider);
+        ProviderEntity savedProvider = providerRepository.save(provider);
+        return mapEntityToDto(savedProvider);
     }
 
     @Override
