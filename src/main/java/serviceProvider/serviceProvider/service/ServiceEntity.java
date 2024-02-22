@@ -3,6 +3,8 @@ package serviceProvider.serviceProvider.service;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -23,6 +25,7 @@ public class ServiceEntity {
     private String description;
 
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "services")
+    @JsonIgnore
     private Set<ProviderEntity> providers = new HashSet<>();
 
     public Long getId() {
