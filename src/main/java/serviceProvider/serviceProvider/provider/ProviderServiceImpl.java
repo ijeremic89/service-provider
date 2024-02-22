@@ -1,0 +1,76 @@
+package serviceProvider.serviceProvider.provider;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+
+import jakarta.annotation.Resource;
+import serviceProvider.serviceProvider.exceptions.ProviderNotFoundException;
+import serviceProvider.serviceProvider.service.ServiceDto;
+import serviceProvider.serviceProvider.service.ServiceEntity;
+import serviceProvider.serviceProvider.service.ServiceRepository;
+
+@Service
+public class ProviderServiceImpl implements ProviderService {
+
+    @Resource
+    private ProviderRepository providerRepository;
+
+    @Resource
+    private ServiceRepository serviceRepository;
+
+    @Override
+    public ProviderDto findProviderById(Long id) {
+        return mapEntityToDto(providerRepository.findById(id)
+                                                .orElseThrow(() -> new ProviderNotFoundException(id)));
+    }
+
+    @Override
+    public List<ProviderDto> findAllProviders() {
+        return null;
+    }
+
+    @Override
+    public ProviderDto createProvider(ProviderDto providerDto) {
+        return null;
+    }
+
+    @Override
+    public ProviderDto updateProvider(Long id, ProviderDto provider) {
+        return null;
+    }
+
+    @Override
+    public String deleteProvider(Long id) {
+        return null;
+    }
+
+    private void mapDtoToEntity(ProviderDto providerDto, ProviderEntity provider) {
+        provider.setName(providerDto.getName());
+        if (provider.getServices() == null) {
+            provider.setServices(new HashSet<>());
+        }
+
+        providerDto.getServices()
+                   .forEach(_service -> {
+                       ServiceEntity service =
+                           serviceRepository.findById(_service.getId()).orElseThrow(() -> new ProviderNotFoundException(2L)); //TODO: add service service
+                       if (service != null) {
+                           provider.addService(service);
+                       }
+                   });
+    }
+
+    private ProviderDto mapEntityToDto(ProviderEntity provider) {
+        ProviderDto providerDto = new ProviderDto();
+        providerDto.setId(provider.getId());
+        providerDto.setName(provider.getName());
+        providerDto.setServices(provider.getServices()
+                                        .stream()
+                                        .map(service -> new ServiceDto(service.getId(), service.getDescription()))
+                                        .collect(Collectors.toSet()));
+        return providerDto;
+    }
+}

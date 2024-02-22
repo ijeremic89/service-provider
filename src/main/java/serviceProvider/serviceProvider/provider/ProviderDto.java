@@ -1,7 +1,7 @@
 package serviceProvider.serviceProvider.provider;
 
+import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import serviceProvider.serviceProvider.service.ServiceDto;
 
@@ -9,15 +9,9 @@ public class ProviderDto {
 
     private Long id;
     private String name;
-    private Set<ServiceDto> services;
+    private Set<ServiceDto> services = new HashSet<>();
 
-    public ProviderDto(ProviderEntity provider) {
-        this.id = provider.getId();
-        this.name = provider.getName();
-        this.services = provider.getServices()
-                                .stream()
-                                .map(service -> new ServiceDto(service.getId(), service.getDescription()))
-                                .collect(Collectors.toSet());
+    public ProviderDto() {
     }
 
     public Long getId() {

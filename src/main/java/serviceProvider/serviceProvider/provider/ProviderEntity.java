@@ -15,7 +15,7 @@ import jakarta.persistence.Table;
 import serviceProvider.serviceProvider.service.ServiceEntity;
 
 @Entity
-@Table(name = "provider")
+@Table(name="provider")
 public class ProviderEntity {
 
     @Id
@@ -53,5 +53,10 @@ public class ProviderEntity {
 
     public void setServices(Set<ServiceEntity> services) {
         this.services = services;
+    }
+
+    public void addService(ServiceEntity service) {
+        this.services.add(service);
+        service.getProviders().add(this);
     }
 }
