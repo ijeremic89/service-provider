@@ -2,9 +2,12 @@ package serviceProvider.serviceProvider.provider;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -25,5 +28,10 @@ public class ProviderController {
     @GetMapping("/getAll")
     public ResponseEntity<List<ProviderDto>> getAllProviders() {
         return ResponseEntity.ok(providerService.findAllProviders());
+    }
+
+    @PostMapping("/create")
+    public ResponseEntity<ProviderDto> createProvider(@RequestBody ProviderDto providerDto) {
+        return new ResponseEntity<>(providerService.createProvider(providerDto), HttpStatus.CREATED);
     }
 }

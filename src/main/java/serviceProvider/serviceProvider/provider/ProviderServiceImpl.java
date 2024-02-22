@@ -42,7 +42,9 @@ public class ProviderServiceImpl implements ProviderService {
 
     @Override
     public ProviderDto createProvider(ProviderDto providerDto) {
-        return null;
+        ProviderEntity provider = new ProviderEntity();
+        mapDtoToEntity(providerDto, provider);
+        return mapEntityToDto(providerRepository.save(provider));
     }
 
     @Override
@@ -56,6 +58,7 @@ public class ProviderServiceImpl implements ProviderService {
     }
 
     private void mapDtoToEntity(ProviderDto providerDto, ProviderEntity provider) {
+        provider.setId(providerDto.getId());
         provider.setName(providerDto.getName());
         if (provider.getServices() == null) {
             provider.setServices(new HashSet<>());
