@@ -1,5 +1,6 @@
 package serviceProvider.serviceProvider.provider;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -29,7 +30,14 @@ public class ProviderServiceImpl implements ProviderService {
 
     @Override
     public List<ProviderDto> findAllProviders() {
-        return null;
+        List<ProviderEntity> providerEntities = providerRepository.findAll();
+        List<ProviderDto> providers = new ArrayList<>();
+
+        providerEntities.forEach(provider -> {
+            ProviderDto providerDto = mapEntityToDto(provider);
+            providers.add(providerDto);
+        });
+        return providers;
     }
 
     @Override
