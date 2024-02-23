@@ -1,5 +1,6 @@
 package serviceProvider.serviceProvider.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -8,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import jakarta.transaction.Transactional;
 import serviceProvider.serviceProvider.exceptions.ServiceNotFoundException;
 import serviceProvider.serviceProvider.mapper.ServiceMapper;
 import serviceProvider.serviceProvider.provider.ProviderRepository;
@@ -46,6 +48,7 @@ public class ServiceServiceImpl implements ServiceService {
                                 .collect(Collectors.toList());
     }
 
+    @Transactional
     @Override
     public ServiceDTO createService(ServiceDTO serviceDTO) {
         log.info("Creating service: {}", serviceDTO);
@@ -55,14 +58,29 @@ public class ServiceServiceImpl implements ServiceService {
         return ServiceMapper.INSTANCE.serviceToServiceDto(savedService);
     }
 
+    @Transactional
     @Override
     public ServiceDTO updateService(Long id, ServiceDTO serviceDTO) {
-        return null;
+        log.info("Updating service with ID: {}", id);
+        ServiceEntity service = serviceRepository.findByIdWithProviders(id)
+                                                 .orElseThrow(() -> new ServiceNotFoundException(id));
+
+        service.setDescription(serviceDTO.getDescription());
+        updateServiceProviders(service, serviceDTO.getProviders());
+        ServiceEntity savedService = serviceRepository.save(service);
+        return ServiceMapper.INSTANCE.serviceToServiceDto(savedService);
     }
 
+    @Transactional
     @Override
     public String deleteService(Long id) {
-        return null;
+        log.info("Deleting service with ID: {}", id);
+        ServiceEntity service = serviceRepository.findByIdWithProviders(id)
+                                                 .orElseThrow(() -> new ServiceNotFoundException(id));
+
+        service.removeProviders();
+        serviceRepository.deleteById(service.getId());
+        return "Service with id: " + id + " deleted successfully!";
     }
 
     @Override
@@ -74,16 +92,21 @@ public class ServiceServiceImpl implements ServiceService {
         Set<Long> newProviderIds = newProviderDtos.stream()
                                                   .map(ProviderWithoutServicesDTO::getId)
                                                   .collect(Collectors.toSet());
+        List<ProviderEntity> currentProviders = new ArrayList<>(service.getProviders());
         List<ProviderEntity> newProviders = providerRepository.findAllById(newProviderIds);
 
-        service.getProviders()
-               .removeIf(existingProvider -> !newProviders.contains(existingProvider));
-
-        newProviders.forEach(newProvider -> {
-            if (!service.getProviders().contains(newProvider)) {
-                log.debug("Adding service to provider: {}", newProviders);
-                service.addProvider(newProvider);
+        // Remove old providers not present in the new set
+        for (ProviderEntity currentProvider : currentProviders) {
+            if (!newProviderIds.contains(currentProvider.getId())) {
+                service.removeProvider(currentProvider); // This also takes care of the other side of the relationship
             }
-        });
+        }
+
+        // Add new providers
+        for (ProviderEntity newProvider : newProviders) {
+            if (!service.getProviders().contains(newProvider)) {
+                service.addProvider(newProvider); // This also takes care of the other side of the relationship
+            }
+        }
     }
 }
