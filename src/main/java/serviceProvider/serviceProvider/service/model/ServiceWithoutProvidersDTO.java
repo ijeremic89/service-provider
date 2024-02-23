@@ -1,11 +1,11 @@
-package serviceProvider.serviceProvider.service;
+package serviceProvider.serviceProvider.service.model;
 
-public class ServiceDto {
+public class ServiceWithoutProvidersDTO {
 
     private Long id;
     private String description;
 
-    public ServiceDto(Long id, String description) {
+    public ServiceWithoutProvidersDTO(Long id, String description) {
         this.id = id;
         this.description = description;
     }

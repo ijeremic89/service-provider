@@ -1,4 +1,4 @@
-package serviceProvider.serviceProvider.provider;
+package serviceProvider.serviceProvider.provider.model;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -12,7 +12,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
-import serviceProvider.serviceProvider.service.ServiceEntity;
+import serviceProvider.serviceProvider.service.model.ServiceEntity;
 
 @Entity
 @Table(name="provider")

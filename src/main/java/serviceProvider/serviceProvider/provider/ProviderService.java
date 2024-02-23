@@ -3,43 +3,44 @@ package serviceProvider.serviceProvider.provider;
 import java.util.List;
 
 import serviceProvider.serviceProvider.exceptions.ProviderNotFoundException;
+import serviceProvider.serviceProvider.provider.model.ProviderDTO;
 
 public interface ProviderService {
     /**
      * Finds a provider by its unique ID.
      *
      * @param id the ID of the provider to find
-     * @return the found {@link ProviderDto} if a provider with the specified ID exists
+     * @return the found {@link ProviderDTO} if a provider with the specified ID exists
      * @throws ProviderNotFoundException if no provider is found with the given ID
      */
-    ProviderDto findProviderById(Long id);
+    ProviderDTO findProviderById(Long id);
 
     /**
      * Retrieves all providers.
      *
-     * @return a list of {@link ProviderDto} representing all providers. The list may be empty if no providers are found.
+     * @return a list of {@link ProviderDTO} representing all providers. The list may be empty if no providers are found.
      */
-    List<ProviderDto> findAllProviders();
+    List<ProviderDTO> findAllProviders();
 
     /**
      * Creates a new provider.
      *
-     * @param providerDto the {@link ProviderDto} containing the details of the provider to create
-     * @return the created {@link ProviderDto} with its ID and other generated values filled in
-     * @throws IllegalArgumentException if the provided {@link ProviderDto} contains invalid data
+     * @param providerDTO the {@link ProviderDTO} containing the details of the provider to create
+     * @return the created {@link ProviderDTO} with its ID and other generated values filled in
+     * @throws IllegalArgumentException if the provided {@link ProviderDTO} contains invalid data
      */
-    ProviderDto createProvider(ProviderDto providerDto);
+    ProviderDTO createProvider(ProviderDTO providerDTO);
 
     /**
      * Updates an existing provider.
      *
      * @param id the ID of the provider to update
-     * @param provider the {@link ProviderDto} containing the updated details of the provider
-     * @return the updated {@link ProviderDto}
+     * @param provider the {@link ProviderDTO} containing the updated details of the provider
+     * @return the updated {@link ProviderDTO}
      * @throws ProviderNotFoundException if no provider is found with the given ID
-     * @throws IllegalArgumentException if the provided {@link ProviderDto} contains invalid data
+     * @throws IllegalArgumentException if the provided {@link ProviderDTO} contains invalid data
      */
-    ProviderDto updateProvider(Long id, ProviderDto provider);
+    ProviderDTO updateProvider(Long id, ProviderDTO provider);
 
     /**
      * Deletes a provider by its ID.
@@ -64,8 +65,8 @@ public interface ProviderService {
      *             the search will not be restricted by name.
      * @param serviceId Optional. The ID of the service to search for providers that offer this service.
      *                  If {@code null}, the search will not be restricted by service ID.
-     * @return A list of {@link ProviderDto} objects that match the search criteria. The list may be empty if
+     * @return A list of {@link ProviderDTO} objects that match the search criteria. The list may be empty if
      *         no providers match the criteria.
      */
-    List<ProviderDto> findProvidersByCriteria(String name, Long serviceId);
+    List<ProviderDTO> findProvidersByCriteria(String name, Long serviceId);
 }

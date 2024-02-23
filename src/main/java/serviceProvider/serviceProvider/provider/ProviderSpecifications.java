@@ -3,7 +3,8 @@ package serviceProvider.serviceProvider.provider;
 import org.springframework.data.jpa.domain.Specification;
 
 import jakarta.persistence.criteria.Join;
-import serviceProvider.serviceProvider.service.ServiceEntity;
+import serviceProvider.serviceProvider.provider.model.ProviderEntity;
+import serviceProvider.serviceProvider.service.model.ServiceEntity;
 
 public class ProviderSpecifications {
     public static Specification<ProviderEntity> hasName(String name) {

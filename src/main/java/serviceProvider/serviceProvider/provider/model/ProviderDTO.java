@@ -1,18 +1,19 @@
-package serviceProvider.serviceProvider.provider;
+package serviceProvider.serviceProvider.provider.model;
 
 import java.util.HashSet;
 import java.util.Set;
 
-import serviceProvider.serviceProvider.service.ServiceDto;
+import serviceProvider.serviceProvider.service.model.ServiceWithoutProvidersDTO;
 
-public class ProviderDto {
+public class ProviderDTO {
 
     private Long id;
     private String name;
-    private Set<ServiceDto> services = new HashSet<>();
+    private Set<ServiceWithoutProvidersDTO> services = new HashSet<>();
 
-    public ProviderDto() {
+    public ProviderDTO() {
     }
+
 
     public Long getId() {
         return id;
@@ -30,11 +31,11 @@ public class ProviderDto {
         this.name = name;
     }
 
-    public Set<ServiceDto> getServices() {
+    public Set<ServiceWithoutProvidersDTO> getServices() {
         return services;
     }
 
-    public void setServices(Set<ServiceDto> services) {
+    public void setServices(Set<ServiceWithoutProvidersDTO> services) {
         this.services = services;
     }
 }
