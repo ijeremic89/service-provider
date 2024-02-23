@@ -6,7 +6,6 @@ import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -25,7 +24,6 @@ public class ProviderServiceImpl implements ProviderService {
     private final ProviderRepository providerRepository;
     private final ServiceRepository serviceRepository;
 
-    @Autowired
     public ProviderServiceImpl(ProviderRepository providerRepository, ServiceRepository serviceRepository) {
         this.providerRepository = providerRepository;
         this.serviceRepository = serviceRepository;

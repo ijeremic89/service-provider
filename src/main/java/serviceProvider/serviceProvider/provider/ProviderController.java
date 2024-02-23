@@ -2,7 +2,6 @@ package serviceProvider.serviceProvider.provider;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -15,14 +14,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import jakarta.annotation.Resource;
-
 @RestController
 @RequestMapping("/provider")
 public class ProviderController {
 
-    @Autowired
-    private ProviderServiceImpl providerService;
+    private final ProviderServiceImpl providerService;
+
+    public ProviderController(ProviderServiceImpl providerService) {
+        this.providerService = providerService;
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<ProviderDto> getProvider(@PathVariable Long id) {
