@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import serviceProvider.serviceProvider.service.model.ServiceEntity;
+
 public interface ServiceRepository extends JpaRepository<ServiceEntity, Long> {
 
     @Query("SELECT s FROM ServiceEntity s JOIN FETCH s.providers WHERE s.id = :id")

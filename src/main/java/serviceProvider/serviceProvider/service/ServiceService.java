@@ -2,16 +2,19 @@ package serviceProvider.serviceProvider.service;
 
 import java.util.List;
 
+import serviceProvider.serviceProvider.service.model.ServiceDTO;
+
 public interface ServiceService {
-    ServiceDto findServiceById(Long id);
 
-    List<ServiceDto> findAllServices();
+    ServiceDTO findServiceById(Long id);
 
-    ServiceDto createService(ServiceDto serviceDto);
+    List<ServiceDTO> findAllServices();
 
-    ServiceDto updateService(Long id, ServiceDto serviceDto);
+    ServiceDTO createService(ServiceDTO serviceDTO);
+
+    ServiceDTO updateService(Long id, ServiceDTO serviceDTO);
 
     String deleteService(Long id);
 
-    List<ServiceDto> findServicesByCriteria(String name, Long serviceId);
+    List<ServiceDTO> findServicesByCriteria(String name, Long serviceId);
 }

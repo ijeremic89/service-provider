@@ -1,12 +1,14 @@
 package serviceProvider.serviceProvider.provider.model;
 
 public class ProviderWithoutServicesDTO {
+
     private Long id;
     private String name;
 
-    public ProviderWithoutServicesDTO() {
+    public ProviderWithoutServicesDTO(Long id, String name) {
+        this.id = id;
+        this.name = name;
     }
-
 
     public Long getId() {
         return id;

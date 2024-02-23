@@ -1,6 +1,7 @@
 package serviceProvider.serviceProvider.service;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -11,6 +12,10 @@ import serviceProvider.serviceProvider.exceptions.ServiceNotFoundException;
 import serviceProvider.serviceProvider.mapper.ServiceMapper;
 import serviceProvider.serviceProvider.provider.ProviderRepository;
 import serviceProvider.serviceProvider.provider.ProviderServiceImpl;
+import serviceProvider.serviceProvider.provider.model.ProviderEntity;
+import serviceProvider.serviceProvider.provider.model.ProviderWithoutServicesDTO;
+import serviceProvider.serviceProvider.service.model.ServiceDTO;
+import serviceProvider.serviceProvider.service.model.ServiceEntity;
 
 @Service
 public class ServiceServiceImpl implements ServiceService {
@@ -26,14 +31,14 @@ public class ServiceServiceImpl implements ServiceService {
     }
 
     @Override
-    public ServiceDto findServiceById(Long id) {
+    public ServiceDTO findServiceById(Long id) {
         log.info("Finding service by ID: {}", id);
         return ServiceMapper.INSTANCE.serviceToServiceDto(serviceRepository.findByIdWithProviders(id)
                                                                            .orElseThrow(() -> new ServiceNotFoundException(id)));
     }
 
     @Override
-    public List<ServiceDto> findAllServices() {
+    public List<ServiceDTO> findAllServices() {
         log.info("Fetching all services");
         return serviceRepository.findAllWithProviders()
                                 .stream()
@@ -42,12 +47,16 @@ public class ServiceServiceImpl implements ServiceService {
     }
 
     @Override
-    public ServiceDto createService(ServiceDto serviceDto) {
-        return null;
+    public ServiceDTO createService(ServiceDTO serviceDTO) {
+        log.info("Creating service: {}", serviceDTO);
+        ServiceEntity service = ServiceMapper.INSTANCE.serviceDtoToServiceEntity(serviceDTO);
+        updateServiceProviders(service, serviceDTO.getProviders());
+        ServiceEntity savedService = serviceRepository.save(service);
+        return ServiceMapper.INSTANCE.serviceToServiceDto(savedService);
     }
 
     @Override
-    public ServiceDto updateService(Long id, ServiceDto serviceDto) {
+    public ServiceDTO updateService(Long id, ServiceDTO serviceDTO) {
         return null;
     }
 
@@ -57,7 +66,24 @@ public class ServiceServiceImpl implements ServiceService {
     }
 
     @Override
-    public List<ServiceDto> findServicesByCriteria(String name, Long serviceId) {
+    public List<ServiceDTO> findServicesByCriteria(String name, Long serviceId) {
         return null;
+    }
+
+    private void updateServiceProviders(ServiceEntity service, Set<ProviderWithoutServicesDTO> newProviderDtos) {
+        Set<Long> newProviderIds = newProviderDtos.stream()
+                                                  .map(ProviderWithoutServicesDTO::getId)
+                                                  .collect(Collectors.toSet());
+        List<ProviderEntity> newProviders = providerRepository.findAllById(newProviderIds);
+
+        service.getProviders()
+               .removeIf(existingProvider -> !newProviders.contains(existingProvider));
+
+        newProviders.forEach(newProvider -> {
+            if (!service.getProviders().contains(newProvider)) {
+                log.debug("Adding service to provider: {}", newProviders);
+                service.addProvider(newProvider);
+            }
+        });
     }
 }
