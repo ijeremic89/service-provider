@@ -63,3 +63,6 @@ INSERT INTO provider_services (provider_id, service_id) VALUES (6, 1);
 INSERT INTO provider_services (provider_id, service_id) VALUES (7, 1);
 INSERT INTO provider_services (provider_id, service_id) VALUES (7, 2);
 INSERT INTO provider_services (provider_id, service_id) VALUES (7, 4);
+
+SELECT setval('provider_id_seq', (SELECT MAX(id) FROM provider));
+SELECT setval('service_id_seq', (SELECT MAX(id) FROM service));
