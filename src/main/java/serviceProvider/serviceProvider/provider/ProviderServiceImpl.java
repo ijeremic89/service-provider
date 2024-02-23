@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
@@ -79,6 +80,15 @@ public class ProviderServiceImpl implements ProviderService {
         provider.removeServices();
         providerRepository.deleteById(provider.getId());
         return "Provider with id: " + id + " deleted successfully!";
+    }
+
+    @Override
+    public List<ProviderDto> findProvidersByCriteria(String name, Long serviceId) {
+        Specification<ProviderEntity> spec = ProviderSpecifications.withDynamicQuery(name, serviceId);
+        List<ProviderEntity> providers = providerRepository.findAll(spec);
+        return providers.stream()
+                        .map(ProviderMapper.INSTANCE::providerToProviderDto)
+                        .collect(Collectors.toList());
     }
 
     private void updateProviderServices(ProviderEntity provider, Set<ServiceDto> newServiceDtos) {

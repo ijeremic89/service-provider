@@ -49,4 +49,23 @@ public interface ProviderService {
      * @throws ProviderNotFoundException if no provider is found with the given ID
      */
     String deleteProvider(Long id);
+
+    /**
+     * Finds providers by specified search criteria.
+     * <p>
+     * This method allows for dynamic filtering of providers based on their name and the ID of a service they offer.
+     * Both criteria are optional and can be used together or individually to narrow down the search results.
+     * <p>
+     * The search by name is case-insensitive, meaning it does not consider the case of the letters when matching
+     * provider names. The search by service ID is an exact match, targeting providers that offer a specific service
+     * identified by the provided ID.
+     *
+     * @param name Optional. The name of the provider or a part of it to search for. If {@code null} or empty,
+     *             the search will not be restricted by name.
+     * @param serviceId Optional. The ID of the service to search for providers that offer this service.
+     *                  If {@code null}, the search will not be restricted by service ID.
+     * @return A list of {@link ProviderDto} objects that match the search criteria. The list may be empty if
+     *         no providers match the criteria.
+     */
+    List<ProviderDto> findProvidersByCriteria(String name, Long serviceId);
 }

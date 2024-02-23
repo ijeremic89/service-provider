@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.annotation.Resource;
@@ -46,5 +47,12 @@ public class ProviderController {
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteProvider(@PathVariable Long id) {
         return new ResponseEntity<>(providerService.deleteProvider(id), HttpStatus.OK);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<ProviderDto>> searchProviders(
+        @RequestParam(required = false) String name,
+        @RequestParam(required = false) Long serviceId) {
+        return new ResponseEntity<>(providerService.findProvidersByCriteria(name, serviceId), HttpStatus.OK);
     }
 }
