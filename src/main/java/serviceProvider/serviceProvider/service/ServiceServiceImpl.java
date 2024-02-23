@@ -1,13 +1,21 @@
 package serviceProvider.serviceProvider.service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import serviceProvider.serviceProvider.exceptions.ServiceNotFoundException;
+import serviceProvider.serviceProvider.mapper.ServiceMapper;
 import serviceProvider.serviceProvider.provider.ProviderRepository;
+import serviceProvider.serviceProvider.provider.ProviderServiceImpl;
 
 @Service
 public class ServiceServiceImpl implements ServiceService {
+
+    private static final Logger log = LoggerFactory.getLogger(ProviderServiceImpl.class);
 
     private final ServiceRepository serviceRepository;
     private final ProviderRepository providerRepository;
@@ -19,12 +27,18 @@ public class ServiceServiceImpl implements ServiceService {
 
     @Override
     public ServiceDto findServiceById(Long id) {
-        return null;
+        log.info("Finding service by ID: {}", id);
+        return ServiceMapper.INSTANCE.serviceToServiceDto(serviceRepository.findByIdWithProviders(id)
+                                                                           .orElseThrow(() -> new ServiceNotFoundException(id)));
     }
 
     @Override
     public List<ServiceDto> findAllServices() {
-        return null;
+        log.info("Fetching all services");
+        return serviceRepository.findAllWithProviders()
+                                .stream()
+                                .map(ServiceMapper.INSTANCE::serviceToServiceDto)
+                                .collect(Collectors.toList());
     }
 
     @Override
