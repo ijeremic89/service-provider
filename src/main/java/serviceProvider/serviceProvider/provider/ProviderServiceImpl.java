@@ -1,14 +1,15 @@
 package serviceProvider.serviceProvider.provider;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
-import jakarta.annotation.Resource;
+import jakarta.transaction.Transactional;
 import serviceProvider.serviceProvider.exceptions.ProviderNotFoundException;
+import serviceProvider.serviceProvider.exceptions.ServiceNotFoundException;
 import serviceProvider.serviceProvider.service.ServiceDto;
 import serviceProvider.serviceProvider.service.ServiceEntity;
 import serviceProvider.serviceProvider.service.ServiceRepository;
@@ -16,11 +17,13 @@ import serviceProvider.serviceProvider.service.ServiceRepository;
 @Service
 public class ProviderServiceImpl implements ProviderService {
 
-    @Resource
-    private ProviderRepository providerRepository;
+    private final ProviderRepository providerRepository;
+    private final ServiceRepository serviceRepository;
 
-    @Resource
-    private ServiceRepository serviceRepository;
+    public ProviderServiceImpl(ProviderRepository providerRepository, ServiceRepository serviceRepository) {
+        this.providerRepository = providerRepository;
+        this.serviceRepository = serviceRepository;
+    }
 
     @Override
     public ProviderDto findProviderById(Long id) {
@@ -30,16 +33,13 @@ public class ProviderServiceImpl implements ProviderService {
 
     @Override
     public List<ProviderDto> findAllProviders() {
-        List<ProviderEntity> providerEntities = providerRepository.findAll();
-        List<ProviderDto> providers = new ArrayList<>();
-
-        providerEntities.forEach(provider -> {
-            ProviderDto providerDto = mapEntityToDto(provider);
-            providers.add(providerDto);
-        });
-        return providers;
+        return providerRepository.findAll()
+                                 .stream()
+                                 .map(this::mapEntityToDto)
+                                 .collect(Collectors.toList());
     }
 
+    @Transactional
     @Override
     public ProviderDto createProvider(ProviderDto providerDto) {
         ProviderEntity provider = new ProviderEntity();
@@ -47,18 +47,39 @@ public class ProviderServiceImpl implements ProviderService {
         return mapEntityToDto(providerRepository.save(provider));
     }
 
+    @Transactional
     @Override
     public ProviderDto updateProvider(Long id, ProviderDto providerDto) {
         ProviderEntity provider = providerRepository.findById(id)
                                                     .orElseThrow(() -> new ProviderNotFoundException(id));
 
-        providerDto.setId(provider.getId());
-        provider.getServices().clear();
-        mapDtoToEntity(providerDto, provider);
+        provider.setName(providerDto.getName());
+
+        updateProviderServices(provider, providerDto.getServices());
         ProviderEntity savedProvider = providerRepository.save(provider);
         return mapEntityToDto(savedProvider);
     }
 
+    private void updateProviderServices(ProviderEntity provider, Set<ServiceDto> newServiceDtos) {
+        Set<ServiceEntity> newServices = newServiceDtos.stream()
+                                                       .map(serviceDto ->
+                                                           serviceRepository.findById(serviceDto.getId())
+                                                                            .orElseThrow(() -> new ServiceNotFoundException(serviceDto.getId())))
+                                                       .collect(Collectors.toSet());
+
+        // Remove services not present in the new set
+        provider.getServices()
+                .removeIf(existingService -> !newServices.contains(existingService));
+
+        // Add new services not already present
+        newServices.forEach(newService -> {
+            if (!provider.getServices().contains(newService)) {
+                provider.addService(newService);
+            }
+        });
+    }
+
+    @Transactional
     @Override
     public String deleteProvider(Long id) {
         ProviderEntity provider = providerRepository.findById(id)
@@ -78,7 +99,8 @@ public class ProviderServiceImpl implements ProviderService {
         providerDto.getServices()
                    .forEach(_service -> {
                        ServiceEntity service =
-                           serviceRepository.findById(_service.getId()).orElseThrow(() -> new ProviderNotFoundException(2L)); //TODO: add service service
+                           serviceRepository.findById(_service.getId())
+                                            .orElseThrow(() -> new ServiceNotFoundException(_service.getId()));
                        if (service != null) {
                            provider.addService(service);
                        }
