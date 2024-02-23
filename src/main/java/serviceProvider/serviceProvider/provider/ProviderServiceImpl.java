@@ -32,14 +32,14 @@ public class ProviderServiceImpl implements ProviderService {
     @Override
     public ProviderDto findProviderById(Long id) {
         log.info("Finding provider by ID: {}", id);
-        return ProviderMapper.INSTANCE.providerToProviderDto(providerRepository.findById(id)
+        return ProviderMapper.INSTANCE.providerToProviderDto(providerRepository.findByIdWithServices(id)
                                                                                .orElseThrow(() -> new ProviderNotFoundException(id)));
     }
 
     @Override
     public List<ProviderDto> findAllProviders() {
         log.info("Fetching all providers");
-        return providerRepository.findAll()
+        return providerRepository.findAllWithServices()
                                  .stream()
                                  .map(ProviderMapper.INSTANCE::providerToProviderDto)
                                  .collect(Collectors.toList());
@@ -59,10 +59,10 @@ public class ProviderServiceImpl implements ProviderService {
     @Override
     public ProviderDto updateProvider(Long id, ProviderDto providerDto) {
         log.info("Updating provider with ID: {}", id);
-        ProviderEntity provider = providerRepository.findById(id)
+        ProviderEntity provider = providerRepository.findByIdWithServices(id)
                                                     .orElseThrow(() -> new ProviderNotFoundException(id));
 
-        ProviderMapper.INSTANCE.providerDtoToProviderEntity(providerDto);
+        provider.setName(providerDto.getName());
         updateProviderServices(provider, providerDto.getServices());
         ProviderEntity savedProvider = providerRepository.save(provider);
         return ProviderMapper.INSTANCE.providerToProviderDto(savedProvider);
@@ -72,7 +72,7 @@ public class ProviderServiceImpl implements ProviderService {
     @Override
     public String deleteProvider(Long id) {
         log.info("Deleting provider with ID: {}", id);
-        ProviderEntity provider = providerRepository.findById(id)
+        ProviderEntity provider = providerRepository.findByIdWithServices(id)
                                                     .orElseThrow(() -> new ProviderNotFoundException(id));
 
         provider.removeServices();
