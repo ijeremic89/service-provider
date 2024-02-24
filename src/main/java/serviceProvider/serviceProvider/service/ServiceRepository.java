@@ -10,6 +10,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import serviceProvider.serviceProvider.service.model.ServiceEntity;
+import serviceProvider.serviceProvider.service.projection.ServiceDescriptionProjection;
 
 @Repository
 public interface ServiceRepository extends JpaRepository<ServiceEntity, Long>, JpaSpecificationExecutor<ServiceEntity> {
@@ -19,4 +20,7 @@ public interface ServiceRepository extends JpaRepository<ServiceEntity, Long>, J
 
     @Query("SELECT s FROM ServiceEntity s LEFT JOIN FETCH s.providers")
     List<ServiceEntity> findAllWithProviders();
+
+    @Query("SELECT s.description AS description FROM ServiceEntity s")
+    List<ServiceDescriptionProjection> findAllServiceDescriptions(); // Fetches descriptions of all services
 }

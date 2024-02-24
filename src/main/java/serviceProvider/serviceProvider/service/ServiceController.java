@@ -36,6 +36,11 @@ public class ServiceController {
         return new ResponseEntity<>(service.findAllServices(), HttpStatus.OK);
     }
 
+    @GetMapping("/getAllDescriptions")
+    public ResponseEntity<List<String>> getAllServiceDescriptions() {
+        return new ResponseEntity<>(service.findAllServiceDescriptions(), HttpStatus.OK);
+    }
+
     @PostMapping("/create")
     public ResponseEntity<ServiceDTO> createService(@RequestBody ServiceDTO serviceDTO) {
         return new ResponseEntity<>(service.createService(serviceDTO), HttpStatus.CREATED);

@@ -19,6 +19,7 @@ import serviceProvider.serviceProvider.provider.model.ProviderEntity;
 import serviceProvider.serviceProvider.provider.model.ProviderWithoutServicesDTO;
 import serviceProvider.serviceProvider.service.model.ServiceDTO;
 import serviceProvider.serviceProvider.service.model.ServiceEntity;
+import serviceProvider.serviceProvider.service.projection.ServiceDescriptionProjection;
 
 @Service
 public class ServiceServiceImpl implements ServiceService {
@@ -91,6 +92,13 @@ public class ServiceServiceImpl implements ServiceService {
         return services.stream()
                        .map(ServiceMapper.INSTANCE::serviceToServiceDto)
                        .collect(Collectors.toList());
+    }
+
+    public List<String> findAllServiceDescriptions() {
+        List<ServiceDescriptionProjection> descriptions = serviceRepository.findAllServiceDescriptions();
+        return descriptions.stream()
+                           .map(ServiceDescriptionProjection::getDescription)
+                           .collect(Collectors.toList());
     }
 
     private void updateServiceProviders(ServiceEntity service, Set<ProviderWithoutServicesDTO> newProviderDtos) {
