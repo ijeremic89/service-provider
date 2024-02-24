@@ -25,6 +25,15 @@ public class ServiceEntity {
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "services")
     private Set<ProviderEntity> providers = new HashSet<>();
 
+    public ServiceEntity() {
+
+    }
+
+    public ServiceEntity(Long id, String description) {
+        this.id = id;
+        this.description = description;
+    }
+
     public Long getId() {
         return id;
     }

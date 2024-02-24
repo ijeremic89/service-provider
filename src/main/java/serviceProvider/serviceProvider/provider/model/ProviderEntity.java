@@ -31,6 +31,10 @@ public class ProviderEntity {
         inverseJoinColumns = @JoinColumn(name = "service_id"))
     private Set<ServiceEntity> services = new HashSet<>();
 
+    public ProviderEntity() {
+
+    }
+
     public Long getId() {
         return id;
     }
