@@ -14,8 +14,8 @@ import serviceProvider.serviceProvider.exceptions.ProviderNotFoundException;
 import serviceProvider.serviceProvider.mapper.ProviderMapper;
 import serviceProvider.serviceProvider.provider.model.ProviderDTO;
 import serviceProvider.serviceProvider.provider.model.ProviderEntity;
-import serviceProvider.serviceProvider.service.model.ServiceEntity;
 import serviceProvider.serviceProvider.service.ServiceRepository;
+import serviceProvider.serviceProvider.service.model.ServiceEntity;
 import serviceProvider.serviceProvider.service.model.ServiceWithoutProvidersDTO;
 
 @Service
@@ -95,13 +95,19 @@ public class ProviderServiceImpl implements ProviderService {
         Set<Long> newServiceIds = newServiceDtos.stream()
                                                 .map(ServiceWithoutProvidersDTO::getId)
                                                 .collect(Collectors.toSet());
+        Set<ServiceEntity> currentServices = provider.getServices();
         List<ServiceEntity> newServices = serviceRepository.findAllById(newServiceIds);
 
-        provider.getServices()
-                .removeIf(existingService -> !newServices.contains(existingService));
+        // Remove old services not present in the new set
+        currentServices.forEach(currentService -> {
+            if (!newServices.contains(currentService)) {
+                provider.removeService(currentService);
+            }
+        });
 
+        // Add new services
         newServices.forEach(newService -> {
-            if (!provider.getServices().contains(newService)) {
+            if (!currentServices.contains(newService)) {
                 log.debug("Adding service to provider: {}", newService);
                 provider.addService(newService);
             }

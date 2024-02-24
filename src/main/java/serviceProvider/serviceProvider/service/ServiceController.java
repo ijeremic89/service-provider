@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import serviceProvider.serviceProvider.service.model.ServiceDTO;
@@ -48,5 +49,12 @@ public class ServiceController {
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteService(@PathVariable Long id) {
         return new ResponseEntity<>(service.deleteService(id), HttpStatus.OK);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<ServiceDTO>> searchServices(
+        @RequestParam(required = false) String description,
+        @RequestParam(required = false) Long providerId) {
+        return new ResponseEntity<>(service.findServicesByCriteria(description, providerId), HttpStatus.OK);
     }
 }

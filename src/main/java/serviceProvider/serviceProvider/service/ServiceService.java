@@ -49,9 +49,9 @@ public interface ServiceService {
     /**
      * Retrieves a list of services that match the specified search criteria.
      *
-     * @param name The name criteria to filter the services. Can be {@code null} or empty to ignore this filter.
-     * @param serviceId The unique identifier criteria to filter the services. Can be {@code null} to ignore this filter.
+     * @param description The name criteria to filter the services. Can be {@code null} or empty to ignore this filter.
+     * @param providerId The unique identifier criteria to filter the services. Can be {@code null} to ignore this filter.
      * @return A list of {@link ServiceDTO} objects representing the services that match the specified criteria. Returns an empty list if no matching services are found.
      */
-    List<ServiceDTO> findServicesByCriteria(String name, Long serviceId);
+    List<ServiceDTO> findServicesByCriteria(String description, Long providerId);
 }

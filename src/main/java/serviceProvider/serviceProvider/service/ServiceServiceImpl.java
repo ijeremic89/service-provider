@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
@@ -84,8 +85,12 @@ public class ServiceServiceImpl implements ServiceService {
     }
 
     @Override
-    public List<ServiceDTO> findServicesByCriteria(String name, Long serviceId) {
-        return null;
+    public List<ServiceDTO> findServicesByCriteria(String description, Long providerId) {
+        Specification<ServiceEntity> spec = ServiceSpecifications.withDynamicQuery(description, providerId);
+        List<ServiceEntity> services = serviceRepository.findAll(spec);
+        return services.stream()
+                       .map(ServiceMapper.INSTANCE::serviceToServiceDto)
+                       .collect(Collectors.toList());
     }
 
     private void updateServiceProviders(ServiceEntity service, Set<ProviderWithoutServicesDTO> newProviderDtos) {
@@ -96,17 +101,18 @@ public class ServiceServiceImpl implements ServiceService {
         List<ProviderEntity> newProviders = providerRepository.findAllById(newProviderIds);
 
         // Remove old providers not present in the new set
-        for (ProviderEntity currentProvider : currentProviders) {
-            if (!newProviderIds.contains(currentProvider.getId())) {
-                service.removeProvider(currentProvider); // This also takes care of the other side of the relationship
+        currentProviders.forEach(currentProvider -> {
+            if (!newProviders.contains(currentProvider)) {
+                service.removeProvider(currentProvider);
             }
-        }
+        });
 
         // Add new providers
-        for (ProviderEntity newProvider : newProviders) {
-            if (!service.getProviders().contains(newProvider)) {
-                service.addProvider(newProvider); // This also takes care of the other side of the relationship
+        newProviders.forEach(newProvider -> {
+            if (!currentProviders.contains(newProvider)) {
+                log.debug("Adding service to provider: {}", newProvider);
+                service.addProvider(newProvider);
             }
-        }
+        });
     }
 }
